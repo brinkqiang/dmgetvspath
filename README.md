@@ -23,8 +23,27 @@ Copyright (c) 2013-2018 brinkqiang (brink.qiang@gmail.com)
 
 ## Intro
 dmgetvspath
-```cpp
 ```
+dmgetvspath -VS_BIT=amd64 -VS_NAME=Enterprise -VS_VERSION=2019
+```
+
+output
+```
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\devenv.exe
+    (默认)    REG_SZ    "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\common7\ide\devenv.exe"
+
+
+16 ms
+**********************************************************************
+** Visual Studio 2019 Developer Command Prompt v16.11.7
+** Copyright (c) 2021 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+
+1578 ms
+call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64 done
+```
+
 ## Contacts
 [![Join the chat](https://badges.gitter.im/brinkqiang/dmgetvspath/Lobby.svg)](https://gitter.im/brinkqiang/dmgetvspath)
 
