@@ -4,8 +4,16 @@
 #include "dmstrtk.hpp"
 #include "dmutil.h"
 
+#include "dmflags.h"
+
+DEFINE_string(VS_VERSION, "2019", "VS version");
+DEFINE_string(VS_NAME, "Enterprise", "VS name");
+DEFINE_string(VS_BIT, "amd64", "x86/amd64");
+
 int main(int argc, char* argv[])
 {
+    DMFLAGS_INIT(argc, argv);
+
     Iexecute* execute = executeGetModule();
 
     if (NULL != execute)
@@ -24,11 +32,11 @@ int main(int argc, char* argv[])
             if (it2 != std::string::npos)
             {
                 std::string strPath = strRet.substr(it, it2 - it + 1);
-                auto it3 = strPath.find("Enterprise");
+                auto it3 = strPath.find(FLAGS_VS_NAME);
                 if (it3 != std::string::npos)
                 {
                     strPath = strPath.substr(0, it3);
-                    strPath = strPath + R"(VC\Auxiliary\Build\vcvarsall.bat")";
+                    strPath = strPath + FLAGS_VS_NAME + R"(\VC\Auxiliary\Build\vcvarsall.bat")";
                     vecList.push_back(strPath);
                 }
             }
@@ -38,8 +46,15 @@ int main(int argc, char* argv[])
 
         for (auto str : vecList)
         {
-            std::string strRet = execute->exec(fmt::format("call {} {}", str, "amd64"));
+            auto it = str.find(FLAGS_VS_VERSION);
+            if (it != std::string::npos)
+            {
+                std::string strCmd = fmt::format("call {} {}", str, FLAGS_VS_BIT);
+                std::string strRet = execute->exec(strCmd);
 
+                fmt::print("{} done", strCmd);
+                return 0;
+            }
         }
 
     }
