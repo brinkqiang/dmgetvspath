@@ -29,7 +29,7 @@ dmgetvspath -VS_BIT=amd64 -VS_NAME=Enterprise -VS_VERSION=2019
 
 output
 ```
-call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64 done
+call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64
 ```
 
 ## Contacts
