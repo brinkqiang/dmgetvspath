@@ -32,6 +32,16 @@ output
 call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64
 ```
 
+use in bat
+```
+for /F "tokens=*" %%i in ('dmgetvspath -VS_BIT=amd64 -VS_NAME=Enterprise -VS_VERSION=2019') do ( 
+    set vscmd=%%i
+)
+
+%vscmd%
+
+```
+
 ## Contacts
 [![Join the chat](https://badges.gitter.im/brinkqiang/dmgetvspath/Lobby.svg)](https://gitter.im/brinkqiang/dmgetvspath)
 
