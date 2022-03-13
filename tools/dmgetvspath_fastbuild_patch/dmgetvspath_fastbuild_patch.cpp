@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    fmt::print("patch failed. please use administrator run.\n");
+                    fmt::print("patch failed. please run as administrator.\n");
                 }
 
                 return 0;
