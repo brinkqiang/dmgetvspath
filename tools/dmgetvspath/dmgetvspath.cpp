@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
                 std::string strCmd = fmt::format("call {} {}", str, FLAGS_VS_BIT);
                 std::string strRet = execute->exec(strCmd);
 
-                fmt::print("{} done\n", strCmd);
+                fmt::print("{}\n", strCmd);
                 return 0;
             }
         }
