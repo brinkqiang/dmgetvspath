@@ -5,6 +5,8 @@
 #include "dmutil.h"
 
 #include "dmflags.h"
+#include "dmfile.h"
+#include "dmcmake_package_bin.h"
 
 DEFINE_string(VS_VERSION, "2019", "VS version");
 DEFINE_string(VS_NAME, "Enterprise", "VS name");
@@ -31,12 +33,12 @@ int main(int argc, char* argv[])
 
             if (it2 != std::string::npos)
             {
-                std::string strPath = strRet.substr(it, it2 - it + 1);
+                std::string strPath = strRet.substr(it + 1, it2 - it - 1);
                 auto it3 = strPath.find(FLAGS_VS_NAME);
                 if (it3 != std::string::npos)
                 {
                     strPath = strPath.substr(0, it3);
-                    strPath = strPath + FLAGS_VS_NAME + R"(\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets")";
+                    strPath = strPath + FLAGS_VS_NAME + R"(\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets)";
                     vecList.push_back(strPath);
                 }
             }
@@ -49,7 +51,16 @@ int main(int argc, char* argv[])
             auto it = str.find(FLAGS_VS_VERSION);
             if (it != std::string::npos)
             {
-                fmt::print("{}\n", str);
+                bool bRet = DMWriteFile(str, std::string(DMTPL_DMCMAKE_GetData(ETPLTYPE_MICROSOFT_COMMON_CURRENTVERSION_TARGETS), DMTPL_DMCMAKE_GetDataSize(ETPLTYPE_MICROSOFT_COMMON_CURRENTVERSION_TARGETS)));
+                if (bRet)
+                {
+                    fmt::print("patch done path: {}\n", str);
+                }
+                else
+                {
+                    fmt::print("patch failed. please use administrator run.\n");
+                }
+
                 return 0;
             }
         }
