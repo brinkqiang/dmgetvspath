@@ -42,8 +42,8 @@ for /F "tokens=*" %%i in ('dmgetvspath -VS_BIT=amd64 -VS_NAME=Enterprise -VS_VER
 
 ```
 
-dmgetvspath_fastbuild_patch
--- fix vs2019 fastbuild build bug
+dmgetvspath_fastbuild_patch  
+- fix vs2019 fastbuild build bug
 ```
 dmgetvspath_fastbuild_patch -VS_NAME=Enterprise -VS_VERSION=2019
 ```
