@@ -29,16 +29,35 @@ int main(int argc, char* argv[])
         {
             std::string ip = results[2];
 
-            std::string host_ip = fmt::format("\n{} {}\n", ip, FLAGS_SET_WSL_HOST_NAME);
 
             std::string strData = DMLoadFile(fmt::format(R"({}{})", getenv("windir"), R"(\System32\drivers\etc\hosts)"));
-            strData = strtk::replace(host_ip, "", strData);
-            strData += host_ip;
+
+            std::vector<std::string> lines;
+            strtk::parse(strData, "\n", lines);
+
+            bool change = false;
+            for (auto& line : lines)
+            {
+                auto it = strtk::ifind(FLAGS_SET_WSL_HOST_NAME, line);
+                if (it != std::string::npos)
+                {
+                    line = fmt::format("{} {}", ip, FLAGS_SET_WSL_HOST_NAME);
+
+                    strData = strtk::join("\n", lines);
+                    change = true;
+                    break;
+                }
+            }
+
+            if (!change)
+            {
+                strData += fmt::format("{} {}\n", ip, FLAGS_SET_WSL_HOST_NAME);
+            }
+
             bool bRet = DMWriteFile(fmt::format(R"({}{})", getenv("windir"), R"(\System32\drivers\etc\hosts)"), strData);
             if (!bRet)
             {
                 fmt::print("DMWriteFile failed. please run with root.\n");
-                getch();
                 return -1;
             }
             fmt::print("Done\n");
