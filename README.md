@@ -53,6 +53,5 @@ patch done path: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\
 ```
 
 ## Contacts
-[![Join the chat](https://badges.gitter.im/brinkqiang/dmgetvspath/Lobby.svg)](https://gitter.im/brinkqiang/dmgetvspath)
 
 ## Thanks
