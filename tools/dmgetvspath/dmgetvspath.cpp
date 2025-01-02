@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
                 std::string strCmd2 = fmt::format(R"(call "{}" {})", str, FLAGS_VS_BIT);
                 std::string strRet2 = execute->exec(strCmd2);
 
-                fmt::print("{}\n", strRet2);
+                fmt::print("{}\n", strCmd2);
                 return 0;
             }
         }
