@@ -50,6 +50,21 @@ macro(ModuleInclude ModuleName ModulePath)
 
 endmacro(ModuleInclude)
 
+macro(InterfaceImport ModuleName ModulePath DependsLib)
+    MESSAGE(STATUS "ModuleImport ${ModuleName} ${ModulePath}")
+
+    set(${ModuleName}_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath})
+    mark_as_advanced(${ModuleName}_INCLUDE_DIR)
+    set(${ModuleName}_LIBRARIES ${ModuleName})
+    mark_as_advanced(${ModuleName}_LIBRARIES)
+    
+    add_library(${ModuleName} INTERFACE)
+
+    target_include_directories(${ModuleName} INTERFACE ${${ModuleName}_INCLUDE_DIR})
+
+    TARGET_LINK_LIBRARIES(${ModuleName} ${DependsLib})
+endmacro(InterfaceImport)
+
 macro(ModuleImport ModuleName ModulePath)
     MESSAGE(STATUS "ModuleImport ${ModuleName} ${ModulePath}")
 
@@ -141,6 +156,37 @@ macro(LibImport ModuleName ModulePath)
     ENDIF()
 endmacro(LibImport)
 
+macro(LibImportExclude ModuleName ModulePath ExcludeList)
+    MESSAGE(STATUS "LibImport ${ModuleName} ${ModulePath}")
+    IF (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath})
+        ModuleInclude(${ModuleName} ${ModulePath})
+        FILE(GLOB_RECURSE LIB_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/*.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/*.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/*.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/*.h
+        )
+
+        LIST(FILTER LIB_SOURCES EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/tpl/*")
+
+
+        FOREACH(child ${ExcludeList})
+            LIST(FILTER LIB_SOURCES EXCLUDE REGEX "${child}")
+            MESSAGE(STATUS "ExcludeList has ${child}" )
+        ENDFOREACH()
+
+        IF (WIN32)
+            LIST(APPEND LIB_SOURCES)
+        ENDIF(WIN32)
+
+        ADD_LIBRARY(${ModuleName} ${LIB_SOURCES})
+    ENDIF()
+endmacro(LibImportExclude)
+
 macro(DllImport ModuleName ModulePath)
     MESSAGE(STATUS "DllImport ${ModuleName} ${ModulePath}")
 
@@ -163,7 +209,15 @@ macro(DllImport ModuleName ModulePath)
             LIST(APPEND LIB_SOURCES)
         ENDIF(WIN32)
 
-        ADD_LIBRARY(${ModuleName} SHARED ${LIB_SOURCES})
+        IF (WIN32)
+            IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/${ModuleName}.def)
+                ADD_LIBRARY(${ModuleName} SHARED ${LIB_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/${ModuleName}.def)
+            ELSE()
+                ADD_LIBRARY(${ModuleName} SHARED ${LIB_SOURCES})
+            ENDIF()
+        ELSE(WIN32)
+            ADD_LIBRARY(${ModuleName} SHARED ${LIB_SOURCES})
+        ENDIF(WIN32)
     ENDIF()
 endmacro(DllImport)
 
@@ -216,7 +270,15 @@ macro(DllImportDepends ModuleName ModulePath DependsLib)
             LIST(APPEND LIB_SOURCES)
         ENDIF(WIN32)
 
-        ADD_LIBRARY(${ModuleName} SHARED ${LIB_SOURCES})
+        IF (WIN32)
+            IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/${ModuleName}.def)
+                ADD_LIBRARY(${ModuleName} SHARED ${LIB_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/${ModulePath}/${ModuleName}.def)
+            ELSE()
+                ADD_LIBRARY(${ModuleName} SHARED ${LIB_SOURCES})
+            ENDIF()
+        ELSE(WIN32)
+            ADD_LIBRARY(${ModuleName} SHARED ${LIB_SOURCES})
+        ENDIF(WIN32)
         TARGET_LINK_LIBRARIES(${ModuleName} ${DependsLib})
     ENDIF()
 endmacro(DllImportDepends)

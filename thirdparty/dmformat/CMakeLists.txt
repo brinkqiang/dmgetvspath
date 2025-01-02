@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.21)
 
 PROJECT(dmformat)
 
@@ -9,4 +9,6 @@ ModuleSetCompileOptions()
 
 ADD_DEFINITIONS(-DUSE_DMFORMAT)
 
-ExeImport("test" "")
+if(PROJECT_IS_TOP_LEVEL)
+    ExeImport("test" "")
+endif()

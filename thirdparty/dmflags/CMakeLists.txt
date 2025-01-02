@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.21)
 
 PROJECT(dmflags)
 
@@ -117,8 +117,11 @@ ENDIF(WIN32)
 
 ADD_LIBRARY(dmflags ${SOURCES})
 
-FILE(GLOB_RECURSE SOURCES 
-${CMAKE_CURRENT_SOURCE_DIR}/test/main.cc)
+if(PROJECT_IS_TOP_LEVEL)
+  FILE(GLOB_RECURSE SOURCES 
+  ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cc)
 
-ADD_EXECUTABLE(dmflagstest ${SOURCES})
-TARGET_LINK_LIBRARIES(dmflagstest dmflags)
+  ADD_EXECUTABLE(dmflagstest ${SOURCES})
+  TARGET_LINK_LIBRARIES(dmflagstest dmflags)
+endif()
+
