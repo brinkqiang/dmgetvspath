@@ -7,7 +7,6 @@
 #include "dmflags.h"
 
 DEFINE_string(VS_VERSION, "2019", "VS version");
-DEFINE_string(VS_NAME, "Enterprise", "VS name");
 DEFINE_string(VS_BIT, "amd64", "x86/amd64");
 
 int main(int argc, char* argv[])
@@ -20,39 +19,36 @@ int main(int argc, char* argv[])
     {
         std::string strCwd = DMGetWorkPath();
 
-        std::string strCmd = fmt::format(R"(REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\devenv.exe)");
+        std::string strCmd = fmt::format(R"(vswhere)");
         std::string strRet = execute->exec(strCmd);
 
-        std::vector<std::string> vecList;
-        auto it = strRet.find_first_of(R"(")");
-        while (it != std::string::npos)
-        {
-            auto it2 = strRet.find_first_of(R"(")", it + 1);
 
-            if (it2 != std::string::npos)
-            {
-                std::string strPath = strRet.substr(it, it2 - it + 1);
-                auto it3 = strPath.find(FLAGS_VS_NAME);
-                if (it3 != std::string::npos)
-                {
-                    strPath = strPath.substr(0, it3);
-                    strPath = strPath + FLAGS_VS_NAME + R"(\VC\Auxiliary\Build\vcvarsall.bat")";
-                    vecList.push_back(strPath);
-                }
-            }
+		std::vector<std::string> vecList;
 
-            it = it2;
-        }
+		auto startPos = strRet.find("installationPath: ");
+		if (startPos != std::string::npos)
+		{
+			startPos += std::string("installationPath: ").length(); // 跳过 'installationPath:' 的长度
+			auto endPos = strRet.find_first_of("\n", startPos); // 假设路径后有换行符
+
+			if (endPos != std::string::npos)
+			{
+				std::string strPath = strRet.substr(startPos, endPos - startPos);
+				strPath = strPath + R"(\VC\Auxiliary\Build\vcvarsall.bat)"; // 构造完整的路径
+
+				vecList.push_back(strPath);
+			}
+		}
 
         for (auto str : vecList)
         {
             auto it = str.find(FLAGS_VS_VERSION);
             if (it != std::string::npos)
             {
-                std::string strCmd = fmt::format("call {} {}", str, FLAGS_VS_BIT);
-                std::string strRet = execute->exec(strCmd);
+                std::string strCmd2 = fmt::format(R"(call "{}" {})", str, FLAGS_VS_BIT);
+                std::string strRet2 = execute->exec(strCmd2);
 
-                fmt::print("{}\n", strCmd);
+                fmt::print("{}\n", strRet2);
                 return 0;
             }
         }
