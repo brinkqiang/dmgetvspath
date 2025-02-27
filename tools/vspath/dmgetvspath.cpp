@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 
         std::string strCmd2 = fmt::format(R"(call "{}" {})", strPath, FLAGS_VS_BIT.c_str());
         std::string strRet2 = execute->exec(strCmd2);
-
+        fmt::print("{}\n", strCmd2);
         return 0;
     }
 
